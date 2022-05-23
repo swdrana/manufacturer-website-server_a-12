@@ -7,10 +7,42 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 /********************************************\
             MongoDB Connection Start
 \********************************************/
+//Import
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.1z0dn.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverApi: ServerApiVersion.v1,
+  });
+
+  const run = async () => {
+    try {
+      await client.connect();
+      const productsCollection = client.db("eToolsDB").collection("products");
+  
+      // load all item from database
+      app.get("/products", async (req, res) => {
+        const query = {};
+        const cursor = productsCollection.find(query);
+        const allProduct = await cursor.toArray();
+        res.send(allProduct);
+      });
+  
+      
+    } finally {
+      // await client.close();
+    }
+  };
+  run().catch(console.dir);
+
+
+
+
 
 
 
