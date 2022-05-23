@@ -41,6 +41,15 @@ const run = async () => {
       const result = await productsCollection.insertOne(newItem);
       console.log("User Inserted. ID: ", result.insertedId);
     });
+    
+    // delete a product from database 
+    app.delete(`/deleteProduct/:id`, async (req, res) =>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id)};
+        console.log(query);
+        const result = await productsCollection.deleteOne(query);
+        res.send(result);
+    })
   } finally {
     // await client.close();
   }
