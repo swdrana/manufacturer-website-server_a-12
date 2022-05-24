@@ -34,21 +34,6 @@ const run = async () => {
       const allProduct = await cursor.toArray();
       res.send(allProduct);
     });
-    // load all item from database for Orders
-    app.get("/orders", async (req, res) => {
-      const query = {};
-      const cursor = orderCollection.find(query);
-      const allProduct = await cursor.toArray();
-      res.send(allProduct);
-    });
-
-    // load multiple item using user email for Order
-    app.get("/my-orders/:searchEmail", async (req, res)=>{
-        const query = { userEmail: req.params.searchEmail };
-        const cursor = orderCollection.find(query);
-        const findedProductsBasedOnEmail = await cursor.toArray();
-        res.send(findedProductsBasedOnEmail);
-    })
     // add single item to database
     app.post("/add", async (req, res) => {
       const newItem = req.body;
@@ -75,7 +60,7 @@ const run = async () => {
         res.send(product);
       });
 
-    // update a product
+    // update a user
     app.put("/newUser/:email", async (req, res) => {
         const email = req.params.email;
         const user = req.body;
@@ -110,6 +95,22 @@ const run = async () => {
 
 
 
+    // load all item from database for Orders
+    app.get("/orders", async (req, res) => {
+        const query = {};
+        const cursor = orderCollection.find(query);
+        const allProduct = await cursor.toArray();
+        res.send(allProduct);
+      });
+  
+      // load multiple item using user email for Order
+      app.get("/my-orders/:searchEmail", async (req, res)=>{
+          const query = { userEmail: req.params.searchEmail };
+          const cursor = orderCollection.find(query);
+          const findedProductsBasedOnEmail = await cursor.toArray();
+          res.send(findedProductsBasedOnEmail);
+      })
+
     // add single item to database for myOrder
     app.post("/newOrder", async (req, res) => {
       const newItem = req.body;
@@ -118,6 +119,32 @@ const run = async () => {
       const result = await orderCollection.insertOne(newItem);
       console.log("User Inserted. ID: ", result.insertedId);
     });
+    // update myOrder
+    app.put("/updateOrderStatus/:id", async (req, res) => {
+        const id = req.params.id;
+        console.log(id);
+        const updateOrder = req.body;
+        console.log(updateOrder);
+        const filter = {  _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updatedDoc = {
+          $set: { 
+            ...updateOrder
+          },
+        };
+        const result = await orderCollection.updateOne(
+          filter,
+          updatedDoc,
+          options
+        );
+        res.send(result);
+      });
+
+
+
+
+
+
 
     // delete a product from database 
     app.delete(`/deleteOrder/:id`, async (req, res) =>{
