@@ -67,6 +67,13 @@ const run = async () => {
         console.log("User Inserted. ID: ", result.insertedId);
       });
 
+    // load single user using email
+    app.get("/userInfo/:email", async (req, res) => {
+        const email = req.params.email;
+        const query = { email };
+        const product = await usersCollection.findOne(query);
+        res.send(product);
+      });
 
     // update a product
     app.put("/newUser/:email", async (req, res) => {
@@ -128,6 +135,7 @@ const run = async () => {
       const product = await productsCollection.findOne(query);
       res.send(product);
     });
+    
 
     // delete a product from database 
     app.delete(`/deleteProduct/:id`, async (req, res) =>{
