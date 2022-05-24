@@ -25,6 +25,7 @@ const run = async () => {
     await client.connect();
     const productsCollection = client.db("eToolsDB").collection("products");
     const orderCollection = client.db("eToolsDB").collection("orders");
+    const usersCollection = client.db("eToolsDB").collection("users");
 
     // load all item from database
     app.get("/products", async (req, res) => {
@@ -41,6 +42,13 @@ const run = async () => {
       res.send(allProduct);
     });
 
+    // load multiple item using user email for Order
+    app.get("/my-orders/:searchEmail", async (req, res)=>{
+        const query = { userEmail: req.params.searchEmail };
+        const cursor = orderCollection.find(query);
+        const findedProductsBasedOnEmail = await cursor.toArray();
+        res.send(findedProductsBasedOnEmail);
+    })
     // add single item to database
     app.post("/add", async (req, res) => {
       const newItem = req.body;
@@ -49,6 +57,51 @@ const run = async () => {
       const result = await productsCollection.insertOne(newItem);
       console.log("User Inserted. ID: ", result.insertedId);
     });
+
+    // add single item to database for user
+    app.post("/newUser", async (req, res) => {
+        const newItem = req.body;
+        console.log(newItem);
+        res.send({ result: "data received!" });
+        const result = await usersCollection.insertOne(newItem);
+        console.log("User Inserted. ID: ", result.insertedId);
+      });
+
+
+    // update a product
+    app.put("/newUser/:email", async (req, res) => {
+        const email = req.params.email;
+        const user = req.body;
+        const filter = { email };
+        const options = { upsert: true };
+        console.log(user);
+        const updatedDoc = {
+          $set: { 
+              ...user
+          },
+        };
+        const result = await usersCollection.updateOne(
+          filter,
+          updatedDoc,
+          options
+        );
+        res.send(result);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // add single item to database for myOrder
     app.post("/newOrder", async (req, res) => {
