@@ -33,6 +33,13 @@ const run = async () => {
       const allProduct = await cursor.toArray();
       res.send(allProduct);
     });
+    // load all item from database for Orders
+    app.get("/orders", async (req, res) => {
+      const query = {};
+      const cursor = orderCollection.find(query);
+      const allProduct = await cursor.toArray();
+      res.send(allProduct);
+    });
 
     // add single item to database
     app.post("/add", async (req, res) => {
