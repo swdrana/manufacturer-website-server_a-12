@@ -24,6 +24,7 @@ const run = async () => {
   try {
     await client.connect();
     const productsCollection = client.db("eToolsDB").collection("products");
+    const orderCollection = client.db("eToolsDB").collection("orders");
 
     // load all item from database
     app.get("/products", async (req, res) => {
@@ -41,7 +42,24 @@ const run = async () => {
       const result = await productsCollection.insertOne(newItem);
       console.log("User Inserted. ID: ", result.insertedId);
     });
-    
+
+    // add single item to database for myOrder
+    app.post("/newOrder", async (req, res) => {
+      const newItem = req.body;
+      console.log(newItem);
+      res.send({ result: "data received!" });
+      const result = await orderCollection.insertOne(newItem);
+      console.log("User Inserted. ID: ", result.insertedId);
+    });
+
+    // load single item using _id
+    app.get("/singleProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const product = await productsCollection.findOne(query);
+      res.send(product);
+    });
+
     // delete a product from database 
     app.delete(`/deleteProduct/:id`, async (req, res) =>{
         const id = req.params.id;
