@@ -27,6 +27,7 @@ const run = async () => {
     const orderCollection = client.db("eToolsDB").collection("orders");
     const cartsCollection = client.db("eToolsDB").collection("carts");
     const usersCollection = client.db("eToolsDB").collection("users");
+    const reviewsCollection = client.db("eToolsDB").collection("reviews");
 
     // load all item from database
     app.get("/products", async (req, res) => {
@@ -196,6 +197,34 @@ const run = async () => {
           const findedProductsBasedOnEmail = await cursor.toArray();
           res.send(findedProductsBasedOnEmail);
       })
+
+
+
+
+
+
+
+
+
+
+    // add single item to database for review
+    app.post("/add-review", async (req, res) => {
+        const newItem = req.body;
+        console.log(newItem);
+        res.send({ result: "data received!" });
+        const result = await reviewsCollection.insertOne(newItem);
+        console.log("review Inserted. ID: ", result.insertedId);
+      });
+
+    // load all item from database for review
+    app.get("/reviews", async (req, res) => {
+        const query = {};
+        const cursor = reviewsCollection.find(query);
+        const allProduct = await cursor.toArray();
+        res.send(allProduct);
+      });
+
+
 
 
 
