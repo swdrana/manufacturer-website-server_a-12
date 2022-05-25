@@ -25,6 +25,7 @@ const run = async () => {
     await client.connect();
     const productsCollection = client.db("eToolsDB").collection("products");
     const orderCollection = client.db("eToolsDB").collection("orders");
+    const cartsCollection = client.db("eToolsDB").collection("carts");
     const usersCollection = client.db("eToolsDB").collection("users");
 
     // load all item from database
@@ -50,6 +51,27 @@ const run = async () => {
         res.send({ result: "data received!" });
         const result = await usersCollection.insertOne(newItem);
         console.log("User Inserted. ID: ", result.insertedId);
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // load all users from database
+    app.get("/users", async (req, res) => {
+        const query = {};
+        const cursor = usersCollection.find(query);
+        const allUsers = await cursor.toArray();
+        res.send(allUsers);
       });
 
     // load single user using email
@@ -95,32 +117,32 @@ const run = async () => {
 
 
 
-    // load all item from database for Orders
-    app.get("/orders", async (req, res) => {
+    // load all item from database for cart
+    app.get("/carts", async (req, res) => {
         const query = {};
-        const cursor = orderCollection.find(query);
+        const cursor = cartsCollection.find(query);
         const allProduct = await cursor.toArray();
         res.send(allProduct);
       });
   
-      // load multiple item using user email for Order
-      app.get("/my-orders/:searchEmail", async (req, res)=>{
+      // load multiple item using user email for Cart
+      app.get("/my-carts/:searchEmail", async (req, res)=>{
           const query = { userEmail: req.params.searchEmail };
-          const cursor = orderCollection.find(query);
+          const cursor = cartsCollection.find(query);
           const findedProductsBasedOnEmail = await cursor.toArray();
           res.send(findedProductsBasedOnEmail);
       })
 
-    // add single item to database for myOrder
-    app.post("/newOrder", async (req, res) => {
+    // add single item to database for myCart
+    app.post("/add-to-cart", async (req, res) => {
       const newItem = req.body;
       console.log(newItem);
       res.send({ result: "data received!" });
-      const result = await orderCollection.insertOne(newItem);
+      const result = await cartsCollection.insertOne(newItem);
       console.log("User Inserted. ID: ", result.insertedId);
     });
-    // update myOrder
-    app.put("/updateOrderStatus/:id", async (req, res) => {
+    // update myCart
+    app.put("/updateCartStatus/:id", async (req, res) => {
         const id = req.params.id;
         console.log(id);
         const updateOrder = req.body;
@@ -132,7 +154,7 @@ const run = async () => {
             ...updateOrder
           },
         };
-        const result = await orderCollection.updateOne(
+        const result = await cartsCollection.updateOne(
           filter,
           updatedDoc,
           options
@@ -140,12 +162,12 @@ const run = async () => {
         res.send(result);
       });
 
-    // delete a product from database for order
-    app.delete(`/deleteOrder/:id`, async (req, res) =>{
+    // delete a product from database for Cart
+    app.delete(`/deleteFromCart/:id`, async (req, res) =>{
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
         console.log(query);
-        const result = await orderCollection.deleteOne(query);
+        const result = await cartsCollection.deleteOne(query);
         res.send(result);
     })
 
@@ -158,10 +180,38 @@ const run = async () => {
 
 
 
+    // add single item to database for Order (Order means is paid)
+    app.post("/add-to-order", async (req, res) => {
+        const newItem = req.body;
+        console.log(newItem);
+        res.send({ result: "data received!" });
+        const result = await orderCollection.insertOne(newItem);
+        console.log("User Inserted. ID: ", result.insertedId);
+      });
+
+      // load multiple item using user email for myOrders
+      app.get("/my-orders/:searchEmail", async (req, res)=>{
+          const query = { userEmail: req.params.searchEmail };
+          const cursor = orderCollection.find(query);
+          const findedProductsBasedOnEmail = await cursor.toArray();
+          res.send(findedProductsBasedOnEmail);
+      })
 
 
 
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
     // load single item using _id
     app.get("/singleProduct/:id", async (req, res) => {
       const id = req.params.id;
