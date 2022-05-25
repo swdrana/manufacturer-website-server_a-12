@@ -140,13 +140,7 @@ const run = async () => {
         res.send(result);
       });
 
-
-
-
-
-
-
-    // delete a product from database 
+    // delete a product from database for order
     app.delete(`/deleteOrder/:id`, async (req, res) =>{
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
@@ -155,6 +149,19 @@ const run = async () => {
         res.send(result);
     })
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     // load single item using _id
     app.get("/singleProduct/:id", async (req, res) => {
       const id = req.params.id;
