@@ -7,6 +7,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// for JWT 
+const accessToken = async (req, res, next) =>{
+
+}
+
 /********************************************\
             MongoDB Connection Start
 \********************************************/
