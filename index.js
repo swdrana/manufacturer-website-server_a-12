@@ -34,6 +34,7 @@ const run = async () => {
     const usersCollection = client.db("eToolsDB").collection("users");
     const reviewsCollection = client.db("eToolsDB").collection("reviews");
     const blogsCollection = client.db("eToolsDB").collection("blogs");
+    const teamsCollection = client.db("eToolsDB").collection("teams");
 
     /*------------------------------------------*\
                 Product API Start
@@ -308,6 +309,29 @@ const run = async () => {
     /*------------------------------------------*\
                     Blogs API End
     \*------------------------------------------*/
+  
+    /*------------------------------------------*\
+                    Teams API Start
+    \*------------------------------------------*/
+
+    //API to add a blog
+    app.post("/add-team", async (req, res) => {
+      const blog = req.body;
+      const result = await teamsCollection.insertOne(blog);
+      res.send(result);
+    });
+
+    //API to get blogs
+    app.get("/teams", async (req, res) => {
+      const query = {};
+      const teams = await teamsCollection.find(query).toArray();
+      res.send(teams);
+    });
+
+    /*------------------------------------------*\
+                    Blogs API End
+    \*------------------------------------------*/
+  
   } finally {
     // await client.close();
   }
